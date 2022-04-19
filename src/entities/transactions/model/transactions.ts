@@ -1,5 +1,4 @@
 import { combine, createEvent, createStore, sample } from "effector"
-import { ChangeEvent } from "react"
 
 import { __transactions__ } from "../lib/helpers"
 import { TTransaction } from "@/src/shared/api"
@@ -7,24 +6,25 @@ import { useStore, useStoreMap } from "effector-react"
 import { currenciesModel } from "../../currencies"
 import { categoriesModel } from "../../categories"
 import { newTransactionModel } from "@/src/features/new-transaction"
+import { filteredDatesModel } from "@/src/features/date-filters"
 
 const $transactions = createStore<TTransaction[]>(__transactions__).on(
     newTransactionModel.addTransactionFx,
     (state, transaction) => [...state, transaction]
 )
 
-const setFilteredDates = createEvent<ChangeEvent<HTMLInputElement>>()
-const $filteredDates = createStore<Record<string, string>>({
-    endDate: "",
-    startDate: "",
-}).on(setFilteredDates, (dates, event) => ({
-    ...dates,
-    [event.target.id]: event.target.value,
-}))
+sample({
+    clock: newTransactionModel.events.selectTransaction,
+    source: $transactions,
+    filter: (transactions, id) => transactions.some((item) => item.id === id),
+    fn: (transactions, id) =>
+        transactions.find((item) => item.id === id) as TTransaction,
+    target: newTransactionModel.$newTransaction,
+})
 
 const $filteredTransactions = combine(
     $transactions,
-    $filteredDates,
+    filteredDatesModel.$filteredDates,
     (transactions, dates) => {
         let start = 0
         let end = new Date().getTime()
@@ -234,7 +234,6 @@ export const selectors = {
 export const events = {
     editTransaction,
     removeTransaction,
-    setFilteredDates,
 }
 export {
     $totalTransactionAmount,
@@ -243,5 +242,4 @@ export {
     $balanceByCurrencies,
     $balanceByCategories,
     $filteredTransactions,
-    $filteredDates,
 }

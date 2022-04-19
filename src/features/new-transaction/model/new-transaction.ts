@@ -1,3 +1,4 @@
+import { transactionsModel } from "@/src/entities/transactions"
 import { TTransaction } from "@/src/shared/api"
 import dayjs from "dayjs"
 import { createEffect, createEvent, createStore, sample } from "effector"
@@ -11,7 +12,7 @@ const toggleOperationType = createEvent()
 
 export const addTransactionFx = createEffect<TTransaction, any>((data) => data)
 
-const $newTransaction = createStore<TTransaction>({
+export const $newTransaction = createStore<TTransaction>({
     id: 0,
     amount: 0,
     category: 0,
@@ -66,6 +67,7 @@ sample({
 
 const toggleReadOnlyTransaction = createEvent()
 const selectTransaction = createEvent<number>()
+
 sample({
     clock: selectTransaction,
     fn: () => true,

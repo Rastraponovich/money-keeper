@@ -1,6 +1,6 @@
 import { transactionsModel } from "@/src/entities/transactions"
 import { useList } from "effector-react"
-import TransactionListItem from "./TransactionListItem"
+import TransactionListItem from "./list-item"
 
 export const TransactionList = () => {
     const transactions = transactionsModel.selectors.useTransactions()
