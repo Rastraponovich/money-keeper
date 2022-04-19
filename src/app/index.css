@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#__next {
+    @apply flex h-full min-h-screen flex-col;
+}
+
+@layer components {
+    .rubles {
+        @apply after:ml-1 after:content-["\20BD"];
+    }
+    .usd {
+        @apply after:ml-1 after:content-["\0024"];
+    }
+    .donut-chart-legend li::before {
+        content: "";
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        margin-right: 0.5em;
+        vertical-align: middle;
+    }
+}
