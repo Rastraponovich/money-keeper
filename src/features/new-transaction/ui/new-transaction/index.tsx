@@ -9,6 +9,7 @@ import { NewTransactionActions } from "../transacrion-actions"
 import { newTransactionModel } from "../.."
 import Toggle from "@/src/shared/ui/toggle"
 import TextInput from "@/src/shared/ui/text-input"
+// import { CategoriesList } from "@/src/features/select-category"
 
 export const NewTransaction = () => {
     const {

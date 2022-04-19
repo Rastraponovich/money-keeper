@@ -7,6 +7,7 @@ import { currenciesModel } from "../../currencies"
 import { categoriesModel } from "../../categories"
 import { newTransactionModel } from "@/src/features/new-transaction"
 import { filteredDatesModel } from "@/src/features/date-filters"
+import { removeTransactionModel } from "@/src/features/remove-transaction"
 
 const $transactions = createStore<TTransaction[]>(__transactions__).on(
     newTransactionModel.addTransactionFx,
@@ -45,28 +46,12 @@ const $filteredTransactions = combine(
     }
 )
 
-const $totalTransactionAmount = $filteredTransactions.map((transactions) =>
-    transactions.reduce((acc, val) => acc + val.amount, 0)
-)
-
-const editTransaction = createEvent<TTransaction>()
-
 sample({
-    clock: editTransaction,
-    source: $transactions,
-    fn: (transaction, payload) => [
-        ...transaction.filter((item) => item.id !== payload.id),
-        payload,
-    ],
-    target: $transactions,
-})
-
-const removeTransaction = createEvent<number>()
-
-sample({
-    clock: removeTransaction,
-    source: $transactions,
-    fn: (transactions, id) => transactions.filter((item) => item.id !== id),
+    clock: removeTransactionModel.events.removeTransaction,
+    source: [$transactions, newTransactionModel.$newTransaction],
+    //@ts-ignore
+    fn: ([transactions, current]: [TTransaction[], TTransaction], event) =>
+        transactions.filter((item) => item.id !== current.id),
     target: $transactions,
 })
 
@@ -173,11 +158,7 @@ const $balanceByCategories = combine(
 )
 const $balanceDonutChart = combine($balance, (balance) => {
     return [
-        {
-            label: "приход",
-            value: balance.incomming,
-            fill: "fill-green-600",
-        },
+        { label: "приход", value: balance.incomming, fill: "fill-green-600" },
         {
             label: "расход",
             value: balance.outgoing * -1,
@@ -224,19 +205,22 @@ const useBalanceByCurrencies = (keys: any[]) => {
     })
 }
 
+const $totalTransactionAmount = $filteredTransactions.map((transactions) =>
+    transactions.reduce((acc, val) => acc + val.amount, 0)
+)
+
+const useTotalTransactionAmount = () => useStore($totalTransactionAmount)
+
 export const selectors = {
     useBalance,
     useBalanceDountSeries,
     useTransactions,
     useBalanceByCategories,
     useBalanceByCurrencies,
+    useTotalTransactionAmount,
 }
-export const events = {
-    editTransaction,
-    removeTransaction,
-}
+export const events = {}
 export {
-    $totalTransactionAmount,
     $transactions,
     $balance,
     $balanceByCurrencies,

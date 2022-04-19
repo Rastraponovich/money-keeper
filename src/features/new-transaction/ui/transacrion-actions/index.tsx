@@ -1,3 +1,4 @@
+import { RemoveTransactionButton } from "@/src/features/remove-transaction"
 import clsx from "clsx"
 import { useEvent } from "effector-react"
 
@@ -37,6 +38,7 @@ export const NewTransactionActions = () => {
             >
                 редактировать
             </button>
+            <RemoveTransactionButton />
             <div className="grow"></div>
             <button
                 type="button"

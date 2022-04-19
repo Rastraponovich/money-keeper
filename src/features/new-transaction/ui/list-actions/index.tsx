@@ -12,12 +12,14 @@ export const ListActions = memo(({ onClose, onSave }: ListActionProps) => {
     return (
         <div className="flex space-x-4 text-sm text-white">
             <button
+                type="button"
                 className="bg-green-600 px-2 py-1 first-letter:uppercase rounded drop-shadow-sm"
                 onClick={handleSave}
             >
                 сохранить
             </button>
             <button
+                type="button"
                 className="bg-rose-600 px-2 py-1 first-letter:uppercase rounded drop-shadow-sm"
                 onClick={handleClose}
             >

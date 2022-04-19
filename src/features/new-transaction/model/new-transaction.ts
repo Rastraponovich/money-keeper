@@ -1,10 +1,10 @@
-import { transactionsModel } from "@/src/entities/transactions"
 import { TTransaction } from "@/src/shared/api"
 import dayjs from "dayjs"
 import { createEffect, createEvent, createStore, sample } from "effector"
 import { useStore } from "effector-react"
-import { debug } from "patronum"
 import { ChangeEvent } from "react"
+import { removeTransactionModel } from "../../remove-transaction"
+import { selectCategoryModel } from "../../select-category"
 
 const cancelCreateTransaction = createEvent()
 const createTransaction = createEvent()
@@ -40,12 +40,20 @@ sample({
 
 export const $showTransactionWindow = createStore<boolean>(false)
     .on(createTransaction, () => true)
-    .reset([cancelCreateTransaction, addTransactionFx.done])
+    .reset([
+        cancelCreateTransaction,
+        addTransactionFx.done,
+        removeTransactionModel.events.removeTransaction,
+    ])
 
 const setSelectNewTransaction = createEvent<ChangeEvent<HTMLSelectElement>>()
 const setAmountNewTransaction = createEvent<ChangeEvent<HTMLInputElement>>()
 sample({
-    clock: [setSelectNewTransaction, setAmountNewTransaction],
+    clock: [
+        setSelectNewTransaction,
+        setAmountNewTransaction,
+        selectCategoryModel.events.select,
+    ],
     source: $newTransaction,
     fn: (transaction, event) => ({
         ...transaction,
